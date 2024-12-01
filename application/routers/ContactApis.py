@@ -33,11 +33,8 @@ def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, 
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No contacts were found matching with the given key",
         )
-    start=(page_num-1)*page_size
-    end=start+page_size
-    contacts['pagination']={
-        "total records"
-    }
+    return contacts;
+    
 
 
 @router.put("/contacts/by-name/{oldname}", status_code=status.HTTP_200_OK)

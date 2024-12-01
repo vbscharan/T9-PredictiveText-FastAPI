@@ -5,7 +5,7 @@ from fastapi import HTTPException,status
 class RateLimiter:
     _instance=None
     _userToBuckets={}
-    _perUserTokenCount=1
+    _perUserTokenCount=100
     #No.of requets to serve per each user per second
     _leakRate=_perUserTokenCount/60   
     @classmethod

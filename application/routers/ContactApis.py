@@ -33,7 +33,7 @@ def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, 
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No contacts were found matching with the given key",
         )
-    return contacts;
+    return contacts
     
 
 

@@ -6,7 +6,7 @@ class RateLimiter:
     _instance=None
     _userToBuckets={}
     _perUserTokenCount=1
-    #No.of requets to serve per each user
+    #No.of requets to serve per each user per second
     _leakRate=_perUserTokenCount/60   
     @classmethod
     def getInstance(cls):

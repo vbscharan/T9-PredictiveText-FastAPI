@@ -12,7 +12,7 @@ class Trie:
             "9": ["w", "x", "y", "z"],
         }
 
-    # Add Contact Name and number to Triesn and Maps
+    # Add Contact Name and number to Tries 
     def addContact(self, name, number, cursor, conn,username):
         self.addContactNameToTrie(name, cursor, conn,username)
         self.addContactNumberToTrie(number, cursor, conn,username)
@@ -20,6 +20,26 @@ class Trie:
         self.addContactNumber(name,number,cursor,conn,username)
         # self.nameToNumberMap[name]=number
         # self.numberToNameMap[number]=name
+
+    def deleteContactName(self,name,cursor,conn,username):
+        try:
+            cursor.execute("select * from numbers where username=(%s) and name=(%s)",(username,name))
+            fetchedRows=cursor.fetchall()
+            print(fetchedRows)
+            if fetchedRows is None:
+                return False
+            if not self.deleteContactNameInTrie(name,cursor,conn,username):
+                raise Exception()
+            for i in fetchedRows:
+                if not self.deleteContactNumberInTrie(i['numbers'],cursor,conn,username):
+                    raise Exception()
+            cursor.execute("delete from numbers where username=(%s) and name=(%s)",(username,name))
+            conn.commit() 
+            return True
+        except Exception as error:
+            print(error)
+            conn.rollback()
+            return False
 
     # Add ContactName to Trie
     def addContactNameToTrie(self, word, cursor, conn,username):
@@ -138,7 +158,7 @@ class Trie:
             return True
         return False
 
-    def searchContact(self, userInput, cursor,username):
+    async def searchContact(self, userInput, cursor,username):
         ans = {}
         cursor.execute("select * from contactsbook where id=(%s)", (self.rootid,))
         currRow = cursor.fetchone()

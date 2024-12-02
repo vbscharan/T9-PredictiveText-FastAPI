@@ -15,7 +15,6 @@ db=SingletonDatabaseConnection.getInstance().db
 
 @router.post("/contacts", status_code=status.HTTP_201_CREATED)
 def addContact(payload: ContactCreateSchema,username:str=Depends(oauth2.getCurrentUser)):
-    print(username)
     trie.addContact(
         payload.name,
         str(payload.number),
@@ -25,8 +24,8 @@ def addContact(payload: ContactCreateSchema,username:str=Depends(oauth2.getCurre
 
 
 @router.get("/contacts", status_code=status.HTTP_200_OK)
-def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, page_size: int =5):
-    contacts = trie.searchContact(key, db.getDatabaseCursor(),username)
+async def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, page_size: int =5):
+    contacts = await trie.searchContact(key, db.getDatabaseCursor(),username)
     if contacts is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -80,10 +79,9 @@ def updateContactNumber(payload: ContactNumberUpdateSchema, oldnumber: int,usern
 
 @router.delete("/contacts/{name}", status_code=status.HTTP_204_NO_CONTENT)
 def deleteContactName(name,username:str=Depends(oauth2.getCurrentUser)):
-    if not trie.deleteContactName(
-        name, db.getDatabaseCursor(), db.getDatabaseConnection(),username
-    ):
+    if not trie.deleteContactName(name, db.getDatabaseCursor(), db.getDatabaseConnection(),username):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="'" + name + "' was not found in database",
         )
+    return "'"+name+"' and their numbers corresponding to user '"+username+"' is/are deleted"

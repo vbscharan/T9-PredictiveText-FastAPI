@@ -26,7 +26,6 @@ def addContact(payload: ContactCreateSchema,username:str=Depends(oauth2.getCurre
 
 @router.get("/contacts", status_code=status.HTTP_200_OK)
 def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, page_size: int =5):
-    RateLimiter().getInstance().acceptRequest(username)
     contacts = trie.searchContact(key, db.getDatabaseCursor(),username)
     if contacts is None:
         raise HTTPException(
@@ -39,7 +38,7 @@ def searchKey(key,username:str=Depends(oauth2.getCurrentUser),page_num: int =1, 
 
 @router.put("/contacts/by-name/{oldname}", status_code=status.HTTP_200_OK)
 def updateContactName(payload: ContactNameUpdateSchema, oldname: str,username:str=Depends(oauth2.getCurrentUser)):
-    RateLimiter().getInstance().acceptRequest(username)
+    #RateLimiter().getInstance().acceptRequest(username)
     if oldname==payload.newname:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -59,7 +58,6 @@ def updateContactName(payload: ContactNameUpdateSchema, oldname: str,username:st
 
 @router.put("/contacts/by-number/{oldnumber}", status_code=status.HTTP_200_OK)
 def updateContactNumber(payload: ContactNumberUpdateSchema, oldnumber: int,username:str=Depends(oauth2.getCurrentUser)):
-    RateLimiter().getInstance().acceptRequest(username)
     if oldnumber==payload.newnumber:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

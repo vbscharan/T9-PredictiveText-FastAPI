@@ -7,7 +7,7 @@ class RateLimiter:
     _userToBuckets={}
     _perUserTokenCount=10
     #No.of requets to serve per each user per second
-    _leakRate=_perUserTokenCount/60   
+    _fillRate=_perUserTokenCount/60   
     @classmethod
     def getInstance(cls):
         if RateLimiter._instance is None:
@@ -19,7 +19,7 @@ class RateLimiter:
         if RateLimiter._userToBuckets.get(username) is None:
             RateLimiter._userToBuckets[username]={"tokenCount":RateLimiter._perUserTokenCount,"lastUsed":currTime}
         elapsed=currTime-RateLimiter._userToBuckets[username]['lastUsed']
-        RateLimiter._userToBuckets[username]["tokenCount"]+=(elapsed*RateLimiter._leakRate)
+        RateLimiter._userToBuckets[username]["tokenCount"]+=(elapsed*RateLimiter._fillRate)
         RateLimiter._userToBuckets[username]["tokenCount"]=min(RateLimiter._userToBuckets[username]["tokenCount"],RateLimiter._perUserTokenCount)
         RateLimiter._userToBuckets[username]["lastUsed"]=currTime
 
